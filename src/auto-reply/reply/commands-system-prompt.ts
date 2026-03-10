@@ -34,7 +34,12 @@ export async function resolveCommandsSystemPromptBundle(
     sessionKey: params.sessionKey,
     sessionId: params.sessionEntry?.sessionId,
   });
-  const skillFilter = resolveAgentSkillsFilter(params.cfg, params.agentId);
+  const { sessionAgentId } = resolveSessionAgentIds({
+    sessionKey: params.sessionKey,
+    config: params.cfg,
+    agentId: params.agentId,
+  });
+  const skillFilter = resolveAgentSkillsFilter(params.cfg, sessionAgentId);
   const skillsSnapshot = (() => {
     try {
       return buildWorkspaceSkillSnapshot(workspaceDir, {
@@ -74,11 +79,6 @@ export async function resolveCommandsSystemPromptBundle(
   })();
   const toolSummaries = buildToolSummaryMap(tools);
   const toolNames = tools.map((t) => t.name);
-  const { sessionAgentId } = resolveSessionAgentIds({
-    sessionKey: params.sessionKey,
-    config: params.cfg,
-    agentId: params.agentId,
-  });
   const defaultModelRef = resolveDefaultModelForAgent({
     cfg: params.cfg,
     agentId: sessionAgentId,
